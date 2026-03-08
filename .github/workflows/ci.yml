@@ -1,11 +1,13 @@
-name: Deploy
+name: CI
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  deploy:
+  check:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,6 +23,12 @@ jobs:
           cache: "pnpm"
 
       - run: pnpm install
-      - run: pnpm build
 
-      # Later: add Terraform and Azure deployment steps here
+      - name: Lint
+        run: pnpm lint
+
+      - name: Type check
+        run: pnpm tsc --noEmit
+
+      - name: Build
+        run: pnpm build
